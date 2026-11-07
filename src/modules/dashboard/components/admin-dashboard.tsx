@@ -410,18 +410,17 @@ export default function AdminDashboard({
       <div className="main-area">
         <header className="topbar">
           <div className="topbar-leading">
+            {/* The same collapse control on every page, not only the overview. */}
+            <button
+              type="button"
+              className="icon-button topbar-sidebar-toggle"
+              aria-label="Toggle sidebar"
+              onClick={toggleSidebarCollapsed}
+            >
+              <Menu size={17} />
+            </button>
             {section === "overview" ? (
-              <>
-                <button
-                  type="button"
-                  className="icon-button topbar-sidebar-toggle"
-                  aria-label="Toggle sidebar"
-                  onClick={toggleSidebarCollapsed}
-                >
-                  <Menu size={17} />
-                </button>
-                <span className="topbar-title">Dashboard Overview</span>
-              </>
+              <span className="topbar-title">Dashboard Overview</span>
             ) : (
               <div className="breadcrumb">Clinic / <strong>{page.title}</strong></div>
             )}

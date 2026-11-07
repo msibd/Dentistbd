@@ -1,9 +1,10 @@
 const CACHE_PREFIX = "dr-ovi-pwa";
 const SHELL_CACHE = `${CACHE_PREFIX}-shell-v1`;
-const PAGE_CACHE = `${CACHE_PREFIX}-public-pages-v1`;
+const PAGE_CACHE = `${CACHE_PREFIX}-public-pages-v2`;
 const STATIC_CACHE = `${CACHE_PREFIX}-static-v1`;
 const SHELL_URLS = ["/offline", "/icon-192.png", "/icon-512.png", "/manifest.webmanifest"];
-const PUBLIC_PAGES = new Set(["/"]);
+// Public pages kept for offline viewing (the home page and one page per menu section).
+const PUBLIC_PAGES = new Set(["/", "/about", "/our-services", "/photo-gallery", "/why-us", "/patient-reviews", "/contact"]);
 
 // On localhost (development, or a local production test) a cache-first worker serves stale chunks
 // after every rebuild and breaks module loading. Remove the worker and its caches there.

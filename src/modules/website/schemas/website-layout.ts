@@ -280,3 +280,17 @@ export const NAV_ANCHORS: Record<NavKey, string> = {
   reviews: "reviews",
   contact: "contact",
 };
+
+/**
+ * The public page each menu entry opens. /services, /reviews, /gallery and /doctors already belong
+ * to the staff dashboard, so the public pages use different addresses.
+ */
+export const NAV_PAGES: Record<NavKey, string> = {
+  home: "/",
+  about: "/about",
+  services: "/our-services",
+  gallery: "/photo-gallery",
+  whyUs: "/why-us",
+  reviews: "/patient-reviews",
+  contact: "/contact",
+};

@@ -4,6 +4,7 @@ import BootstrapScripts from "@/components/shared/bootstrap-scripts";
 import ThemeProvider from "@/components/shared/theme-provider";
 import PwaRegistration from "@/components/shared/pwa-registration";
 import AppToaster from "@/components/shared/app-toaster";
+import { BRAND_FULL_NAME, BRAND_NAME, BRAND_SHORT_NAME } from "@/lib/brand";
 import "./design-tokens.css";
 import "./globals.css";
 
@@ -20,18 +21,18 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   // Absolute address used to build social-preview and canonical links.
   metadataBase: new URL(process.env.BETTER_AUTH_URL ?? "http://localhost:3000"),
-  title: { default: "Dr Ovi's Dental Care", template: "%s | Dr Ovi's Dental Care" },
-  applicationName: "Dr Ovi's Dental Care",
-  openGraph: { type: "website", siteName: "Dr Ovi's Dental Care", locale: "bn_BD", title: "Dr Ovi's Dental Care & Endodontics" },
+  title: { default: BRAND_NAME, template: `%s | ${BRAND_NAME}` },
+  applicationName: BRAND_NAME,
+  openGraph: { type: "website", siteName: BRAND_NAME, locale: "bn_BD", title: BRAND_FULL_NAME },
   formatDetection: { telephone: false },
-  description: "Dr Ovi's Dental Care clinic administration dashboard",
+  description: `${BRAND_NAME} clinic administration dashboard`,
   icons: {
     apple: "/icon-192.png",
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Dr Ovi Dental",
+    title: BRAND_SHORT_NAME,
   },
 };
 

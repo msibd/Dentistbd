@@ -17,6 +17,7 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import Modal from "@/components/shared/modal";
 import { localize, usePublicLanguage, type PublicLanguage } from "./public-language";
@@ -205,10 +206,13 @@ function DetailsModal({
 export default function PublicServices({
   services,
   onBook,
+  previewCount,
 }: {
   services: ClinicService[];
   /** Called with the chosen service; the page scrolls to the booking form with it selected. */
   onBook: (service: ClinicService) => void;
+  /** On the home page, show only this many (until a filter or search is used) with a link to the full list. */
+  previewCount?: number;
 }) {
   const { language } = usePublicLanguage();
   const [search, setSearch] = useState("");
@@ -226,13 +230,15 @@ export default function PublicServices({
   }, [services]);
 
   const needle = search.trim().toLocaleLowerCase();
-  const visible = services.filter((service) => {
+  const matching = services.filter((service) => {
     if (category !== "ALL" && service.category !== category) return false;
     if (!needle) return true;
     const haystack = [service.name, service.nameBn, service.category, service.categoryBn, service.description, service.descriptionBn, service.badgeEn, service.badgeBn]
       .filter(Boolean).join(" ").toLocaleLowerCase();
     return haystack.includes(needle);
   });
+  const preview = Boolean(previewCount) && category === "ALL" && !needle && matching.length > (previewCount ?? 0);
+  const visible = preview ? matching.slice(0, previewCount) : matching;
 
   function book(service: ClinicService) {
     setViewing(null);
@@ -287,6 +293,13 @@ export default function PublicServices({
         </div>
       ) : (
         <p className="rounded-2xl border border-purple-100 bg-white px-4 py-10 text-center text-sm text-slate-500">{localize(language, "No services match your search.", "আপনার খোঁজের সঙ্গে কোনো সেবা মেলেনি।")}</p>
+      )}
+      {preview && (
+        <div className="mt-8 text-center">
+          <Link href="/our-services" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-purple-200 bg-white px-5 text-sm font-semibold text-purple-800 hover:bg-purple-50">
+            {localize(language, `View all ${matching.length} services`, `সব ${numberFormat(language).format(matching.length)}টি সেবা দেখুন`)}
+          </Link>
+        </div>
       )}
       {viewing && <DetailsModal service={viewing} language={language} onClose={() => setViewing(null)} onBook={() => book(viewing)} />}
     </>

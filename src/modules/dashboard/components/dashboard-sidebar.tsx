@@ -81,7 +81,7 @@ const navigationGroups = [
   },
 ];
 
-export default function DashboardSidebar({ user }: { user: AdminIdentity }) {
+export default function DashboardSidebar({ user, brandName }: { user: AdminIdentity; /** The clinic name from Website content (falls back to the built-in name). */ brandName: string }) {
   const pathname = usePathname();
   const mobileOpen = useDashboardUiStore((state) => state.mobileSidebarOpen);
   const collapsed = useDashboardUiStore((state) => state.sidebarCollapsed);
@@ -182,8 +182,8 @@ export default function DashboardSidebar({ user }: { user: AdminIdentity }) {
             <Smile size={19} />
           </div>
           <div>
-            <div className="brand-name">Dr Ovi&apos;s Dental Care</div>
-            <div className="brand-caption">&amp; Endodontics · {user.roleName}</div>
+            <div className="brand-name">{brandName}</div>
+            <div className="brand-caption">{user.roleName}</div>
           </div>
         </Link>
 
