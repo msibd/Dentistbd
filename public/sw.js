@@ -1,6 +1,6 @@
 const CACHE_PREFIX = "dr-ovi-pwa";
 const SHELL_CACHE = `${CACHE_PREFIX}-shell-v1`;
-const PAGE_CACHE = `${CACHE_PREFIX}-public-pages-v2`;
+const PAGE_CACHE = `${CACHE_PREFIX}-public-pages-v3`;
 const STATIC_CACHE = `${CACHE_PREFIX}-static-v1`;
 const SHELL_URLS = ["/offline", "/icon-192.png", "/icon-512.png", "/manifest.webmanifest"];
 // Public pages kept for offline viewing (the home page and one page per menu section).
@@ -72,8 +72,9 @@ async function handleNavigation(request, url) {
     if (
       response.ok &&
       url.search === "" &&
-      PUBLIC_PAGES.has(url.pathname) &&
-      !response.headers.get("Cache-Control")?.includes("no-store")
+      // Only this fixed list of public pages, which hold no personal data. (They are rendered per
+      // request, so they arrive marked no-store; keeping a copy for offline viewing is still safe.)
+      PUBLIC_PAGES.has(url.pathname)
     ) {
       const cache = await caches.open(PAGE_CACHE);
       await cache.put(request, response.clone());

@@ -1,0 +1,41 @@
+# Single-server setup: the app and its PostgreSQL database. Put Nginx (or Caddy) in front for HTTPS;
+# see DEPLOYMENT.md. Settings and secrets live in .env next to this file (never committed;
+# start from .env.production.example).
+#
+#   docker compose up -d --build                         # start / update
+#   docker compose run --rm app node_modules/.bin/prisma migrate deploy   # after every update
+#   docker compose run --rm app node_modules/.bin/tsx prisma/seed.ts      # first admin, once
+
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-dr_ovi_dental}
+      POSTGRES_USER: ${POSTGRES_USER:-dr_ovi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Not published to the internet; only the app container reaches it.
+
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # The app talks to the database directly (live updates need a direct connection, not PgBouncer).
+      DATABASE_URL: postgresql://${POSTGRES_USER:-dr_ovi}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-dr_ovi_dental}?schema=public
+    depends_on:
+      db:
+        condition: service_healthy
+    # Only reachable from this server; Nginx/Caddy forwards public HTTPS traffic to it.
+    ports:
+      - "127.0.0.1:3000:3000"
+
+volumes:
+  db-data:

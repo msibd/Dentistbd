@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { getPublicClinicData, getPublicGalleryImages } from "@/app/public_website/queries/clinic-queries";
 import { BRAND_NAME } from "@/lib/brand";
 import type { NavKey } from "@/modules/website/schemas/website-layout";
@@ -7,6 +8,7 @@ import ClinicWebsite from "./clinic-website";
 
 /** One menu section as its own page (header and footer as on the home page, nothing else). */
 export default async function SectionPage({ only }: { only: NavKey }) {
+  await connection(); // request time only, as on the home page: `next build` must not need the database
   const [clinic, galleryImages] = await Promise.all([
     getPublicClinicData(),
     only === "gallery" ? getPublicGalleryImages() : Promise.resolve([]),

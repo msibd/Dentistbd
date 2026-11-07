@@ -1,9 +1,11 @@
 import type { MetadataRoute } from "next";
-
-const siteUrl = (process.env.BETTER_AUTH_URL ?? "http://localhost:3000").replace(/\/$/, "");
+import { connection } from "next/server";
 
 // Search engines may read the public website; the staff area and the API are off limits.
-export default function robots(): MetadataRoute.Robots {
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  // Read the address when asked, not at build time, so one build works on any domain.
+  await connection();
+  const siteUrl = (process.env.BETTER_AUTH_URL ?? "http://localhost:3000").replace(/\/$/, "");
   return {
     rules: {
       userAgent: "*",

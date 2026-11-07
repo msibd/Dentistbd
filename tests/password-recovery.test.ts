@@ -12,6 +12,7 @@ import { POST as verifyReset } from "@/app/api/password-reset/verify/route";
 import { POST as completeReset } from "@/app/api/password-reset/complete/route";
 import { GET as listPatients } from "@/app/api/patients/route";
 import { auth } from "@/lib/auth";
+import { settleBackgroundTasks } from "@/lib/background";
 import { encryptSecret } from "@/modules/email/secret-box";
 import { prisma } from "@/lib/prisma";
 import {
@@ -24,8 +25,12 @@ let ipCounter = 0;
 const freshIp = () => `198.51.100.${(ipCounter += 1)}`;
 let sent: { to: string; text: string }[] = [];
 
-const request = (email: string, ip = freshIp()) =>
-  call(requestReset, "/api/password-reset/request", { method: "POST", body: { email }, headers: { "x-forwarded-for": ip } });
+// The code is e-mailed after the response; wait for that before looking at what was sent.
+const request = async (email: string, ip = freshIp()) => {
+  const response = await call(requestReset, "/api/password-reset/request", { method: "POST", body: { email }, headers: { "x-forwarded-for": ip } });
+  await settleBackgroundTasks();
+  return response;
+};
 const verify = (email: string, code: string, ip = freshIp()) =>
   call(verifyReset, "/api/password-reset/verify", { method: "POST", body: { email, code }, headers: { "x-forwarded-for": ip } });
 const complete = (token: string, password: string, ip = freshIp()) =>

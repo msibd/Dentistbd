@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { hashPassword } from "better-auth/crypto";
+import { runAfterResponse } from "@/lib/background";
 import { hitRateLimit } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
 import { sendSystemEmail } from "@/modules/email/email-config-service";
@@ -39,12 +40,17 @@ async function enforce(key: string, limit: { max: number; window: number }) {
 /**
  * Step 1: send a code. Always finishes the same way, whether or not the address is registered,
  * e-mail is on, or a code was really sent, so the response cannot be used to look up accounts.
+ * Only the rate limits run before the response; the lookup and the e-mail run after it, so the
+ * response time does not reveal a registered address either (sending mail takes a while).
  */
 export async function requestPasswordReset(emailInput: string, ip: string) {
   const email = normalizeEmail(emailInput);
   await enforce(`pwreset:req:ip:${ip}`, LIMITS.requestIp);
   await enforce(`pwreset:req:email:${email}`, LIMITS.requestEmail);
+  runAfterResponse(() => deliverResetCode(email, ip));
+}
 
+async function deliverResetCode(email: string, ip: string) {
   const user = await prisma.user.findUnique({
     where: { email },
     select: { id: true, name: true, email: true, isActive: true, accounts: { where: { providerId: "credential" }, select: { id: true }, take: 1 } },

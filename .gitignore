@@ -34,6 +34,7 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example
+!.env.production.example
 
 # vercel
 .vercel
@@ -45,3 +46,6 @@ next-env.d.ts
 # local logs and stale generated output
 *.log
 /generated/
+
+# database backups (patient data: never commit)
+/backups/

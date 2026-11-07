@@ -8,6 +8,7 @@ A clinic administration system for a single-doctor dental clinic, built with Nex
 | [DATABASE.md](DATABASE.md) | Tables, relationships, constraints, indexes, migrations |
 | [API_DOCUMENTATION.md](API_DOCUMENTATION.md) | Every API route, its permission, input and output |
 | [SEEDING.md](SEEDING.md) | Demo data, demo logins and how to run the seed safely |
+| [DEPLOYMENT.md](DEPLOYMENT.md) | Server setup (Docker), HTTPS, updates, daily backups, restore and go-live checklist |
 
 ## Roles
 
@@ -79,4 +80,4 @@ New migrations are plain SQL under `prisma/migrations/`. In production run `pnpm
 
 ## Backup and recovery
 
-The application stores everything in PostgreSQL, so a backup is a database backup. Use `pg_dump` on a schedule (and before every migration) and keep copies off the server; to recover, restore into an empty database and run `pnpm exec prisma migrate deploy` to confirm the schema is current. Uploaded files are not stored: gallery entries hold public image URLs only.
+The application stores everything in PostgreSQL, so a backup is a database backup. `scripts/backup-db.sh` makes a daily dump and removes old ones; schedule it with cron, copy the dumps off the server, and test a restore once. Full steps are in [DEPLOYMENT.md](DEPLOYMENT.md). Uploaded files are not stored: gallery entries hold public image URLs only.

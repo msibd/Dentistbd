@@ -1,0 +1,14 @@
+# Never send secrets, local builds or dependencies into the image build.
+.env*
+!.env.example
+.git
+node_modules
+.next
+coverage
+tests
+docs
+backups
+*.log
+*.tsbuildinfo
+Dockerfile
+docker-compose*.yml

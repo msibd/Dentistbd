@@ -3,12 +3,15 @@ import { authorize } from "@/lib/admin-session";
 import { subscribeToClinicChanges } from "@/lib/clinic-realtime";
 import { logger } from "@/lib/logger";
 
+const ACCESS_RECHECK_MS = 5 * 60_000;
+
 export async function GET(request: Request) {
   const access = await authorize(request.headers, "dashboard:read");
   if (!access.session) return NextResponse.json({ error: access.error }, { status: access.status });
 
   const encoder = new TextEncoder();
   let heartbeat: ReturnType<typeof setInterval> | undefined;
+  let accessCheck: ReturnType<typeof setInterval> | undefined;
   let closed = false;
   let controller: ReadableStreamDefaultController<Uint8Array> | undefined;
   let unsubscribe: (() => void) | undefined;
@@ -16,6 +19,7 @@ export async function GET(request: Request) {
     if (closed) return;
     closed = true;
     if (heartbeat) clearInterval(heartbeat);
+    if (accessCheck) clearInterval(accessCheck);
     request.signal.removeEventListener("abort", close);
     unsubscribe?.();
   };
@@ -52,6 +56,13 @@ export async function GET(request: Request) {
       request.signal.addEventListener("abort", close, { once: true });
       send("ready");
       heartbeat = setInterval(() => send("heartbeat"), 25_000);
+      // The stream can stay open for hours. Re-check the session now and then, so a signed-out,
+      // revoked or deactivated account (or one that lost the permission) stops receiving updates.
+      accessCheck = setInterval(() => {
+        void authorize(request.headers, "dashboard:read")
+          .then((current) => { if (!current.session) reconnect(); })
+          .catch((error: unknown) => logger.warn("Realtime access re-check failed; keeping the stream.", { error }));
+      }, ACCESS_RECHECK_MS);
     },
     cancel() {
       close();
