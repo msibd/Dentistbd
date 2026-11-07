@@ -1,5 +1,5 @@
 import { getStaffSession } from "@/lib/admin-session";
-import { BRAND_FULL_NAME } from "@/lib/brand";
+import { BRAND_NAME, BRAND_SUBTITLE } from "@/lib/brand";
 import { readWebsiteContent } from "@/modules/website/queries/website-content";
 import { getRoleName } from "@/lib/roles";
 import AdminSessionProvider from "@/components/shared/admin-session-provider";
@@ -29,9 +29,9 @@ export default async function DashboardLayout({
   };
   // The clinic name in the sidebar follows Website content, so it is changed in one place.
   const content = await readWebsiteContent();
-  const brandName = content.clinicName.trim()
-    ? [content.clinicName.trim(), content.clinicSubtitle.trim()].filter(Boolean).join(" ")
-    : BRAND_FULL_NAME;
+  const customName = content.clinicName.trim();
+  const brandName = customName || BRAND_NAME;
+  const brandSubtitle = customName ? content.clinicSubtitle.trim() : BRAND_SUBTITLE;
   const now = new Date();
   const todayLabel = new Intl.DateTimeFormat("en", {
     weekday: "long",
@@ -48,7 +48,7 @@ export default async function DashboardLayout({
     >
       <QueryProvider>
         <div className="admin-shell" lang="en">
-          <DashboardSidebar user={identity} brandName={brandName} />
+          <DashboardSidebar user={identity} brandName={brandName} brandSubtitle={brandSubtitle} />
           {children}
         </div>
       </QueryProvider>

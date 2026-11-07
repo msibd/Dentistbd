@@ -162,6 +162,8 @@ Reception has `inventory:read`; every change needs `inventory:write` (administra
 | `POST /api/services`, `PATCH /api/services/{id}` | `services:write` | `code`, `name`, `category`, `description`, `standardPrice`, `durationMinutes`, `isActive`. |
 | `GET /api/security/audit` | `security:manage` | Paged audit log. |
 | `GET /api/security/sessions`, `DELETE /api/security/sessions/{id}` | `security:manage` | The caller's own sessions. |
+| `POST /api/security/password/code` | `security:manage` | E-mails a 6-digit code to the caller's own address (one per minute; 5 per hour). Returns the masked address. `503` when e-mail is not set up. |
+| `POST /api/security/password` | `security:manage` | Changes the caller's own password. Body: `currentPassword`, `newPassword` (10+ characters), `code`. Each code allows 5 guesses and works once; other sessions are signed out and the reply carries a fresh session cookie. Better Auth's own `/api/auth/change-password` is disabled so the code cannot be skipped. |
 | `GET`/`POST`/`PATCH`/`DELETE /public_website/api/gallery/manage` | `website:manage` | Gallery images (public URLs and alt text). |
 | `GET`/`PATCH /public_website/api/reviews/moderation` | `website:manage` | Publish or reject reviews. |
 

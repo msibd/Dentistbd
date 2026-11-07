@@ -153,6 +153,18 @@ button {
   font-size: 12px;
 }
 
+/* A long clinic name (set under Website content) is cut with "…" instead of running into the top bar. */
+.sidebar .brand > div {
+  min-width: 0;
+}
+
+.sidebar .brand-name,
+.sidebar .brand-caption {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .nav-label {
   margin: 0 9px 7px;
   color: #a4acb8;

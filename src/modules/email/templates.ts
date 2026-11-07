@@ -88,3 +88,14 @@ ${paragraph(`${name ? `Hello ${escapeHtml(name)},<br>` : ""}The password of your
     text: `${name ? `Hello ${name},\n\n` : ""}The password of your ${CLINIC} staff account was just changed. You were signed out on all devices.\n\nWas this not you? Contact the clinic administrator straight away.\n`,
   };
 }
+
+/** The same code mail as the password reset, worded for someone who is already signed in and changing their password. */
+export function passwordChangeOtpEmail(args: { name?: string | null; code: string; expiresInMinutes: number }): EmailContent {
+  const base = passwordResetOtpEmail(args);
+  const swap = (value: string) => value
+    .replace("to reset your password", "to confirm that you are changing your password")
+    .replace("password reset code", "password change code")
+    .replace("Reset your password", "Confirm your password change")
+    .replace("ask to reset your password", "try to change your password");
+  return { ...base, subject: swap(base.subject), html: swap(base.html), text: swap(base.text) };
+}

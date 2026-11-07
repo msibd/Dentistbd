@@ -81,7 +81,12 @@ const navigationGroups = [
   },
 ];
 
-export default function DashboardSidebar({ user, brandName }: { user: AdminIdentity; /** The clinic name from Website content (falls back to the built-in name). */ brandName: string }) {
+export default function DashboardSidebar({ user, brandName, brandSubtitle }: {
+  user: AdminIdentity;
+  /** The clinic name and subtitle from Website content (fall back to the built-in name). */
+  brandName: string;
+  brandSubtitle: string;
+}) {
   const pathname = usePathname();
   const mobileOpen = useDashboardUiStore((state) => state.mobileSidebarOpen);
   const collapsed = useDashboardUiStore((state) => state.sidebarCollapsed);
@@ -183,7 +188,7 @@ export default function DashboardSidebar({ user, brandName }: { user: AdminIdent
           </div>
           <div>
             <div className="brand-name">{brandName}</div>
-            <div className="brand-caption">{user.roleName}</div>
+            <div className="brand-caption">{[brandSubtitle, user.roleName].filter(Boolean).join(" · ")}</div>
           </div>
         </Link>
 

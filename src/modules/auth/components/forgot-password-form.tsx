@@ -3,6 +3,7 @@
 import { Activity, ArrowLeft, CheckCircle2, Eye, EyeOff, KeyRound, MailCheck, ShieldCheck, Smile } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { BRAND_NAME, BRAND_SUBTITLE } from "@/lib/brand";
 
 type Step = "email" | "code" | "password" | "done";
 const STEPS: Step[] = ["email", "code", "password", "done"];
@@ -114,8 +115,8 @@ export default function ForgotPasswordForm() {
         <div className="brand">
           <div className="brand-mark"><Smile size={20} /></div>
           <div>
-            <div className="brand-name">Dr Ovi&apos;s Dental Care</div>
-            <div className="brand-caption">&amp; Endodontics · Admin portal</div>
+            <div className="brand-name">{BRAND_NAME}</div>
+            <div className="brand-caption">{BRAND_SUBTITLE} · Admin portal</div>
           </div>
         </div>
         <div className="login-art">
@@ -214,7 +215,7 @@ export default function ForgotPasswordForm() {
               )}
             </>
           )}
-          <div className="login-footer">Protected access · Dr Ovi&apos;s Dental Care</div>
+          <div className="login-footer">Protected access · {BRAND_NAME}</div>
         </div>
       </section>
     </main>

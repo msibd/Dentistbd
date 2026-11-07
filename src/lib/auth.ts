@@ -24,6 +24,8 @@ export const auth = betterAuth({
   }),
   secret,
   baseURL: process.env.BETTER_AUTH_URL,
+  // A password is changed only through /api/security/password, which needs the e-mailed code.
+  disabledPaths: ["/change-password"],
   trustedOrigins: [...trustedOrigins],
   rateLimit: {
     enabled: true,

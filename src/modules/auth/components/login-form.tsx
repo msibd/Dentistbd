@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { Activity, Eye, EyeOff, ShieldCheck, Smile } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { NO_ACCESS_ROLE } from "@/lib/permissions";
+import { BRAND_NAME, BRAND_SUBTITLE } from "@/lib/brand";
 
 export default function LoginForm({ accessDenied }: { accessDenied: boolean }) {
   const router = useRouter();
@@ -14,18 +15,6 @@ export default function LoginForm({ accessDenied }: { accessDenied: boolean }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(accessDenied ? "এই অ্যাকাউন্টে ক্লিনিক অ্যাক্সেস নেই।" : "");
   const [loading, setLoading] = useState(false);
-  // "Forgot password" is offered only once the clinic has turned e-mail on.
-  const [recoveryAvailable, setRecoveryAvailable] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    fetch("/api/password-reset/status", { cache: "no-store" })
-      .then((response) => response.json() as Promise<{ available?: boolean }>)
-      .then((result) => { if (active) setRecoveryAvailable(Boolean(result.available)); })
-      .catch(() => undefined);
-    return () => { active = false; };
-  }, []);
-
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
@@ -81,8 +70,8 @@ export default function LoginForm({ accessDenied }: { accessDenied: boolean }) {
         <div className="brand">
           <div className="brand-mark"><Smile size={20} /></div>
           <div>
-            <div className="brand-name">Dr Ovi&apos;s Dental Care</div>
-            <div className="brand-caption">& Endodontics · Admin portal</div>
+            <div className="brand-name">{BRAND_NAME}</div>
+            <div className="brand-caption">{BRAND_SUBTITLE} · Admin portal</div>
           </div>
         </div>
         <div className="login-art">
@@ -147,12 +136,13 @@ export default function LoginForm({ accessDenied }: { accessDenied: boolean }) {
               </button>
             </div>
           </div>
-          {recoveryAvailable && <Link className="login-forgot recovery-link" href="/forgot-password">Forgot password?</Link>}
+          {/* Always offered: when e-mail is not set up, the recovery page says whom to ask instead. */}
+          <Link className="login-forgot recovery-link" href="/forgot-password">Forgot password?</Link>
           <button className="button-primary" type="submit" disabled={loading} style={{ width: "100%", marginTop: 4 }}>
             <ShieldCheck size={15} />
             {loading ? "Signing in..." : "Sign in securely"}
           </button>
-          <div className="login-footer">Protected access · Dr Ovi&apos;s Dental Care</div>
+          <div className="login-footer">Protected access · {BRAND_NAME}</div>
         </form>
       </section>
     </main>

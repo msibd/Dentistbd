@@ -31,8 +31,8 @@ export default function SecuritySection({ onNotice }: SectionProps) {
     <div className="clinic-module-grid">
       {confirmDialog}
       <section className="panel-card clinic-module-card security-card">
-        <header className="panel-header"><div><h2 className="panel-title"><ShieldCheck size={16} /> Access controls</h2><p className="panel-description">Clinic routes and APIs require the authenticated administrator role. User creation and staff RBAC are not enabled in this single-admin deployment.</p></div></header>
-        <ul className="clinic-security-list"><li>Protected dashboard and module APIs</li><li>Passwords managed by Better Auth; no application-side password storage</li><li>Change password is available above this security activity section</li><li>Clinical and financial create/update actions are recorded below</li></ul>
+        <header className="panel-header"><div><h2 className="panel-title"><ShieldCheck size={16} /> Access controls</h2><p className="panel-description">Every page and API checks the signed-in account&apos;s role on the server. Staff accounts and their roles are managed under Users &amp; roles.</p></div></header>
+        <ul className="clinic-security-list"><li>Protected dashboard and module APIs</li><li>Passwords managed by Better Auth; no application-side password storage</li><li>Changing your password needs your current password and a code e-mailed to you</li><li>Clinical and financial create/update actions are recorded below</li></ul>
       </section>
       <section className="panel-card clinic-module-card">
         <header className="panel-header"><div><h2 className="panel-title">Active sessions</h2><p className="panel-description">Revoke sessions you no longer recognize. The current session is protected.</p></div></header>
