@@ -14,9 +14,17 @@ async function main() {
       throw new Error("Set ADMIN_EMAIL in your local environment.");
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    let user = await prisma.user.findUnique({ where: { email } });
     if (!user || user.role !== "admin") {
-      throw new Error("The configured administrator account was not found.");
+      // ADMIN_EMAIL may not match the seeded admin; fall back only when there is exactly one.
+      const admins = await prisma.user.findMany({ where: { role: "admin" } });
+      if (admins.length !== 1) {
+        throw new Error(
+          `No administrator with email ${email} (admins in database: ${admins.map((a) => a.email).join(", ") || "none"}). Set ADMIN_EMAIL to one of them.`,
+        );
+      }
+      user = admins[0];
+      console.log(`ADMIN_EMAIL does not match an administrator; resetting the only administrator: ${user.email}`);
     }
 
     const password = await promptHidden("Enter a new administrator password (at least 10 characters): ");
